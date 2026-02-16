@@ -38,15 +38,13 @@
   "engines": {
     "node": ">=22"
   },
-  "pnpm": {
-    "overrides": {
-      "onnxruntime-node": "1.20.0"
-    }
-  },
   "devDependencies": {
     "ts-node": "10.9.2",
     "tsup": "8.3.5",
     "typescript": "5.6.3",
-    "pm2": "5.4.3" 
+    "pm2": "5.4.3"
+  },
+  "overrides": {
+    "onnxruntime-node": "1.19.2"
   }
 }

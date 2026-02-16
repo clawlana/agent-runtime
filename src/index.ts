@@ -7,7 +7,6 @@ import {
   type Character,
 } from "@elizaos/core";
 import { bootstrapPlugin } from "@elizaos/plugin-bootstrap";
-import { createNodePlugin } from "@elizaos/plugin-node";
 import { solanaPlugin } from "@elizaos/plugin-solana";
 import fs from "fs";
 import net from "net";
@@ -33,8 +32,6 @@ export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
   return new Promise((resolve) => setTimeout(resolve, waitTime));
 };
 
-let nodePlugin: any | undefined;
-
 export function createAgent(
   character: Character,
   db: any,
@@ -47,8 +44,6 @@ export function createAgent(
     character.name,
   );
 
-  nodePlugin ??= createNodePlugin();
-
   return new AgentRuntime({
     databaseAdapter: db,
     token,
@@ -57,7 +52,6 @@ export function createAgent(
     character,
     plugins: [
       bootstrapPlugin,
-      nodePlugin,
       character.settings?.secrets?.WALLET_PUBLIC_KEY ? solanaPlugin : null,
     ].filter(Boolean),
     providers: [],

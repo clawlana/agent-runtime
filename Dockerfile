@@ -1,10 +1,12 @@
-# Use a specific Node.js version for better reproducibility
-FROM node:23.3.0-slim AS builder
+# Use Node 22 LTS for native-module compatibility
+FROM node:22.14.0-slim AS builder
 
-# Install pnpm globally and install necessary build tools
+# Install pnpm globally and native build dependencies
 RUN npm install -g pnpm@9.15.1 && \
     apt-get update && \
-    apt-get install -y git python3 make g++ && \
+    apt-get install -y git python3 make g++ pkg-config \
+    libcairo2-dev libpango1.0-dev libjpeg62-turbo-dev libgif-dev \
+    librsvg2-dev libpixman-1-dev libusb-1.0-0-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -24,8 +26,10 @@ COPY ./src ./src
 COPY ./characters ./characters
 
 # Install dependencies and build the project
-RUN pnpm install 
-RUN pnpm build 
+# Keep optional deps (Rollup needs platform packages), but skip postinstall scripts
+# to avoid native module builds (e.g. node-hid/discord voice) during install.
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
+RUN pnpm build
 
 # Create dist directory and set permissions
 RUN mkdir -p /app/dist && \
@@ -36,12 +40,14 @@ RUN mkdir -p /app/dist && \
 USER node
 
 # Create a new stage for the final image
-FROM node:23.3.0-slim
+FROM node:22.14.0-slim
 
 # Install runtime dependencies if needed
 RUN npm install -g pnpm@9.15.1
 RUN apt-get update && \
-    apt-get install -y git python3 && \
+    apt-get install -y git python3 \
+    libcairo2 libpango-1.0-0 libjpeg62-turbo libgif7 \
+    librsvg2-2 libpixman-1-0 libusb-1.0-0 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
