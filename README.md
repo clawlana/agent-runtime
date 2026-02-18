@@ -1,94 +1,151 @@
-# Eliza
+<div align="center">
+  <h1>elizaOS</h1>
+  <p><strong>The Open-Source Framework for Multi-Agent AI Development</strong></p>
+  <p>Build, deploy, and manage autonomous AI agents with a modern, extensible, and full-featured platform.</p>
+</div>
 
-## Edit the character files
+<div align="center">
+  <!-- Badges will go here -->
+  <a href="https://github.com/elizaos/eliza/blob/main/LICENSE"><img src="https://img.shields.io/github/license/elizaos/eliza?style=for-the-badge" alt="License"></a>
+  <a href="https://www.npmjs.com/package/@elizaos/core"><img src="https://img.shields.io/npm/v/@elizaos/core?style=for-the-badge" alt="NPM Version"></a>
+  <a href="https://docs.elizaos.ai/"><img src="https://img.shields.io/badge/Documentation-Read%20Docs-blue?style=for-the-badge" alt="Documentation"></a>
+  <a href="https://deepwiki.com/elizaOS/eliza"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" height="28"></a>
+  <a href="https://github.com/elizaos/eliza/actions/workflows/image.yaml"><img src="https://img.shields.io/github/actions/workflow/status/elizaos/eliza/ci.yaml?branch=main&style=for-the-badge" alt="CI Status"></a>
+  <a href="https://discord.gg/ai16z"><img src="https://img.shields.io/discord/1253563208833433701?style=for-the-badge&logo=discord" alt="Discord"></a>
+</div>
 
-Open `src/character.ts` to modify the default character. Uncomment and edit.
+## ✨ What is Eliza?
 
-### Custom characters
+elizaOS is an all-in-one, extensible platform for building and deploying AI-powered applications. Whether you're creating sophisticated chatbots, autonomous agents for business process automation, or intelligent game NPCs, Eliza provides the tools you need to get started quickly and scale effectively.
 
-To load custom characters instead:
-- Use `pnpm start --characters="path/to/your/character.json"`
-- Multiple character files can be loaded simultaneously
+It combines a modular architecture with a library-first approach, giving you full control over your agents' development, deployment, and management lifecycle.
 
-### Add clients
-```
-# in character.ts
-clients: [Clients.TWITTER, Clients.DISCORD],
+For complete guides and API references, visit our official **[documentation](https://docs.elizaos.ai/)**.
 
-# in character.json
-clients: ["twitter", "discord"]
-```
+## 🚀 Key Features
 
-## Duplicate the .env.example template
+- 🔌 **Rich Connectivity**: Out-of-the-box connectors for Discord, Telegram, Farcaster, and more.
+- 🧠 **Model Agnostic**: Supports all major models, including OpenAI, Gemini, Anthropic, Llama, and Grok.
+- 🖥️ **Modern Web UI**: A professional dashboard for managing agents, groups, and conversations in real-time.
+- 🤖 **Multi-Agent Architecture**: Designed from the ground up for creating and orchestrating groups of specialized agents.
+- 📄 **Document Ingestion**: Easily ingest documents and allow agents to retrieve information and answer questions from your data (RAG).
+- 🛠️ **Highly Extensible**: Build your own functionality with a powerful plugin system.
+- 📦 **It Just Works**: A seamless setup and development experience from day one.
 
-```bash
-cp .env.example .env
-```
+## 🏁 Getting Started (5-Minute Quick Start)
 
-\* Fill out the .env file with your own values.
+Get your first AI agent running in just a few steps.
 
-### Add login credentials and keys to .env
-```
-DISCORD_APPLICATION_ID="discord-application-id"
-DISCORD_API_TOKEN="discord-api-token"
-...
-OPENROUTER_API_KEY="sk-xx-xx-xxx"
-...
-TWITTER_USERNAME="username"
-TWITTER_PASSWORD="password"
-TWITTER_EMAIL="your@email.com"
-```
+**Prerequisites:**
 
-## Install dependencies and start your agent
+- [Node.js](https://nodejs.org/) (v23+)
+- [bun](https://bun.sh/docs/installation)
 
-```bash
-pnpm i && pnpm start
-```
-Note: this requires node to be at least version 22 when you install packages and run the agent.
+> **Note for Windows Users:** [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install-manual) is required.
 
-## Run with Docker
-
-### Build and run Docker Compose (For x86_64 architecture)
-
-#### Edit the docker-compose.yaml file with your environment variables
-
-```yaml
-services:
-    eliza:
-        environment:
-            - OPENROUTER_API_KEY=blahdeeblahblahblah
-```
-
-#### Run the image
+### 1. Clone the Repository
 
 ```bash
-docker compose up
+git clone https://github.com/elizaos/eliza.git
+cd eliza
+bun install
 ```
 
-### Build the image with Mac M-Series or aarch64
+### 2. Configure Your API Key
 
-Make sure docker is running.
+Create a `.env` file in the project root:
+
+```env
+OPENAI_API_KEY=your_api_key_here
+```
+
+### 3. Run an Example Agent
 
 ```bash
-# The --load flag ensures the built image is available locally
-docker buildx build --platform linux/amd64 -t eliza-starter:v1 --load .
+# Interactive chat
+OPENAI_API_KEY=your_key bun run examples/typescript/chat.ts
+
+# Basic message processing
+OPENAI_API_KEY=your_key bun run examples/typescript/standalone.ts
 ```
 
-#### Edit the docker-compose-image.yaml file with your environment variables
+### 4. Use the Library in Your Own Project
 
-```yaml
-services:
-    eliza:
-        environment:
-            - OPENROUTER_API_KEY=blahdeeblahblahblah
-```
-
-#### Run the image
+Install the core package:
 
 ```bash
-docker compose -f docker-compose-image.yaml up
+bun add @elizaos/core
 ```
 
-# Deploy with Railway
+Create an agent programmatically:
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template/aW47_j)
+```typescript
+import { AgentRuntime } from "@elizaos/core";
+
+const runtime = new AgentRuntime({
+  character: {
+    name: "MyAgent",
+    bio: "A helpful AI assistant.",
+  },
+  plugins: [/* your plugins here */],
+});
+
+await runtime.initialize();
+```
+
+For complete guides and API references, visit our **[documentation](https://docs.elizaos.ai/)**.
+
+## 🏛️ Architecture Overview
+
+Eliza is a monorepo that contains all the packages needed to run the entire platform.
+
+```
+/
+├── packages/
+│   ├── typescript/     # Core package (@elizaos/core) - agent runtime, bootstrap plugin
+│   ├── python/         # Python implementation of the core API
+│   ├── rust/           # Rust implementation (native + WASM)
+│   └── ...             # Other packages and utilities
+├── plugins/            # Official plugins (discord, telegram, openai, etc.)
+├── examples/           # Example agents and usage patterns
+└── ...
+```
+
+- **`@elizaos/core`**: The core package that provides `AgentRuntime`, the bootstrap plugin, message processing, and basic agent actions.
+- **`@elizaos/plugin-sql`**: Database integration (Postgres, PGLite).
+- **`plugins/`**: Official plugins for Discord, Telegram, OpenAI, Anthropic, and many more.
+
+## 🤝 How to Contribute
+
+We welcome contributions from the community! Please read our `CONTRIBUTING.md` guide to get started.
+
+- **Report a Bug**: Open an issue using the [Bug Report](.github/ISSUE_TEMPLATE/bug_report.md) template.
+- **Request a Feature**: Use the [Feature Request](.github/ISSUE_TEMPLATE/feature_request.md) template.
+- **Submit a Pull Request**: Please open an issue first to discuss your proposed changes.
+
+## 📜 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+
+## 🎓 Citation
+
+If you use Eliza in your research, please cite our paper:
+
+```bibtex
+@article{walters2025eliza,
+  title={Eliza: A Web3 friendly AI Agent Operating System},
+  author={Walters, Shaw and Gao, Sam and Nerd, Shakker and Da, Feng and Williams, Warren and Meng, Ting-Chien and Han, Hunter and He, Frank and Zhang, Allen and Wu, Ming and others},
+  journal={arXiv preprint arXiv:2501.06781},
+  year={2025}
+}
+```
+
+## Contributors
+
+<a href="https://github.com/elizaos/eliza/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=elizaos/eliza" alt="Eliza project contributors" />
+</a>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=elizaos/eliza&type=Date)](https://star-history.com/#elizaos/eliza&Date)
